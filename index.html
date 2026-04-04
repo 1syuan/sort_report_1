@@ -2,22 +2,153 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>演算法視覺化教學</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排序演算法視覺化教學</title>
     <style>
-        body { font-family: sans-serif; padding: 40px; line-height: 1.6; }
-        h1 { color: #2c3e50; }
-        ul { list-style: none; padding: 0; }
-        li { margin: 10px 0; }
-        a { text-decoration: none; color: #3498db; font-size: 1.2em; }
-        a:hover { text-decoration: underline; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .algorithms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .algorithm-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .algorithm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c);
+        }
+
+        .algorithm-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .algorithm-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .algorithm-title {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .algorithm-desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: #95a5a6;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .algorithms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>排序演算法視覺化教學</h1>
-    <ul>
-        <li><a href="bubble_sort.html">1. 氣泡排序法 (Bubble Sort)</a></li>
-        <li><a href="selection_sort.html">2. 選擇排序法 (Selection Sort)</a></li>
-        <li><a href="insertion_sort.html">3. 插入排序法 (Insertion Sort)</a></li>
-    </ul>
+    <div class="container">
+        <h1>🎯 排序演算法視覺化教學</h1>
+        <p class="subtitle">互動式學習體驗</p>
+        
+        <div class="algorithms-grid">
+            <a href="bubble_sort.html" class="algorithm-card">
+                <div class="algorithm-icon">🫧</div>
+                <div class="algorithm-title">氣泡排序法</div>
+                <div class="algorithm-desc">最經典的入門排序演算法，透過重複比較相鄰元素並交換來排序。時間複雜度 O(n²)，適合小規模數據。</div>
+            </a>
+            
+            <a href="selection_sort.html" class="algorithm-card">
+                <div class="algorithm-icon">🎯</div>
+                <div class="algorithm-title">選擇排序法</div>
+                <div class="algorithm-desc">每次從未排序部分選取最小元素，放置在已排序部分的末尾。簡單直觀，但效率較低。</div>
+            </a>
+            
+            <a href="insertion_sort.html" class="algorithm-card">
+                <div class="algorithm-icon">📥</div>
+                <div class="algorithm-title">插入排序法</div>
+                <div class="algorithm-desc">將元素插入已排序序列的適當位置。對於部分有序的數據表現優秀，時間複雜度 O(n²)。</div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>互動式學習體驗</p>
+        </div>
+    </div>
 </body>
 </html>

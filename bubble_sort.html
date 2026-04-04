@@ -109,11 +109,41 @@
         /* 控制面板 */
         .controls {
             display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .control-row {
+            display: flex;
             gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 200px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
         }
 
         button {
@@ -124,11 +154,69 @@
             color: white;
             border: none;
             border-radius: 5px;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            font-weight: bold;
         }
 
-        button:hover { background-color: #2980b9; }
-        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        button:hover { 
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button:disabled { 
+            background-color: #bdc3c7; 
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .code-section {
+            margin-top: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre;
+        }
 
         .status-text {
             font-size: 1.2em;
@@ -193,17 +281,42 @@
             <h2>🎥 過程演示</h2>
             
             <div class="controls">
-                <button id="btn-generate" onclick="generateArray()">🔄 產生新陣列</button>
-                <button id="btn-sort" onclick="startBubbleSort()">▶️ 開始排序</button>
+                <div class="control-row">
+                    <div class="input-group">
+                        <label for="array-input">自定義陣列 (逗號分隔):</label>
+                        <input type="text" id="array-input" placeholder="例如: 64,34,25,12,22,11,90" value="64,34,25,12,22,11,90">
+                    </div>
+                    <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
+                    <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
+                    <button id="btn-sort" onclick="startBubbleSort()">▶️ 開始排序</button>
+                    <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
+                </div>
                 
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label for="speed">速度:</label>
-                    <input type="range" id="speed" min="10" max="1000" value="500" oninput="updateSpeed()">
-                    <span id="speed-val">500ms</span>
+                <div class="control-row">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="speed">動畫速度:</label>
+                        <input type="range" id="speed" min="10" max="1000" value="500" oninput="updateSpeed()">
+                        <span id="speed-val">500ms</span>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="step-count">0</div>
+                        <div class="stat-label">步驟</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="compare-count">0</div>
+                        <div class="stat-label">比較次數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="swap-count">0</div>
+                        <div class="stat-label">交換次數</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="status-text" id="status">準備就緒</div>
+            <div class="status-text" id="status">準備就緒 - 請載入或產生陣列</div>
 
             <div class="bars-container" id="bars-container">
                 <!-- Bars will be generated here -->
@@ -216,6 +329,29 @@
                 <div class="legend-item"><div class="dot" style="background:var(--sorted-color)"></div>已排序</div>
             </div>
         </div>
+
+        <!-- 3. 程式碼展示 -->
+        <div class="code-section">
+            <h3>💻 氣泡排序法程式碼 (JavaScript)</h3>
+            <div class="code-block">function bubbleSort(arr) {
+    let n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
+        for (let j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // 交換元素
+                let temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                swapped = true;
+            }
+        }
+        // 如果沒有交換，提早結束
+        if (!swapped) break;
+    }
+    return arr;
+}</div>
+        </div>
     </div>
 
     <script>
@@ -225,16 +361,42 @@
         const statusText = document.getElementById('status');
         const btnGenerate = document.getElementById('btn-generate');
         const btnSort = document.getElementById('btn-sort');
+        const btnLoad = document.getElementById('btn-load');
+        const btnReset = document.getElementById('btn-reset');
         let delay = 500;
         let isSorting = false;
+        let stepCount = 0;
+        let compareCount = 0;
+        let swapCount = 0;
 
         // 初始化
-        window.onload = generateArray;
+        window.onload = function() {
+            loadCustomArray();
+        };
 
         // 更新速度顯示
         function updateSpeed() {
-            delay = 1010 - document.getElementById('speed').value; // 反轉：數值越大延遲越小
-            document.getElementById('speed-val').innerText = document.getElementById('speed').value + ' (速度)';
+            delay = 1010 - document.getElementById('speed').value;
+            document.getElementById('speed-val').innerText = document.getElementById('speed').value + 'ms';
+        }
+
+        // 載入自定義陣列
+        function loadCustomArray() {
+            if (isSorting) return;
+            
+            const input = document.getElementById('array-input').value;
+            const values = input.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
+            
+            if (values.length === 0) {
+                alert('請輸入有效的數字，用逗號分隔');
+                return;
+            }
+            
+            array = values.slice();
+            renderArray();
+            statusText.innerText = `已載入 ${array.length} 個元素的陣列`;
+            resetBarColors();
+            resetStats();
         }
 
         // 產生隨機陣列
@@ -243,13 +405,40 @@
             
             array = [];
             container.innerHTML = '';
-            // 產生 15 個 10~100 之間的隨機數字
-            for (let i = 0; i < 15; i++) {
+            // 產生 10-15 個 10~100 之間的隨機數字
+            const length = Math.floor(Math.random() * 6) + 10;
+            for (let i = 0; i < length; i++) {
                 array.push(Math.floor(Math.random() * 90) + 10);
             }
             renderArray();
-            statusText.innerText = "陣列已產生，請按「開始排序」";
+            statusText.innerText = `已產生 ${array.length} 個隨機元素的陣列`;
             resetBarColors();
+            resetStats();
+            // 更新輸入框顯示
+            document.getElementById('array-input').value = array.join(',');
+        }
+
+        // 重置視覺化
+        function resetVisualization() {
+            if (isSorting) return;
+            resetBarColors();
+            resetStats();
+            statusText.innerText = "已重置，請重新開始排序";
+        }
+
+        // 重置統計
+        function resetStats() {
+            stepCount = 0;
+            compareCount = 0;
+            swapCount = 0;
+            updateStats();
+        }
+
+        // 更新統計顯示
+        function updateStats() {
+            document.getElementById('step-count').innerText = stepCount;
+            document.getElementById('compare-count').innerText = compareCount;
+            document.getElementById('swap-count').innerText = swapCount;
         }
 
         // 渲染陣列到畫面上
@@ -258,7 +447,7 @@
             array.forEach((value, index) => {
                 const bar = document.createElement('div');
                 bar.classList.add('bar');
-                bar.style.height = `${value * 3}px`; // 高度放大 3 倍以便觀看
+                bar.style.height = `${value * 3}px`;
                 bar.innerText = value;
                 bar.id = `bar-${index}`;
                 container.appendChild(bar);
@@ -272,30 +461,37 @@
 
         // 氣泡排序主程式
         async function startBubbleSort() {
-            if (isSorting) return;
+            if (isSorting || array.length === 0) return;
             isSorting = true;
             btnGenerate.disabled = true;
             btnSort.disabled = true;
+            btnLoad.disabled = true;
+            btnReset.disabled = true;
 
+            resetStats();
             const n = array.length;
             
             // 外層迴圈：控制回合數
             for (let i = 0; i < n - 1; i++) {
-                let swapped = false; // 優化：檢查這一回合有沒有發生交換
+                let swapped = false;
 
                 // 內層迴圈：進行兩兩比較
-                // 注意：j < n - i - 1，因為最後 i 個元素已經是排序好的
                 for (let j = 0; j < n - i - 1; j++) {
+                    stepCount++;
+                    compareCount++;
+                    updateStats();
                     
                     // 視覺化：標記正在比較的兩個元素 (黃色)
                     updateBarColor(j, 'comparing');
                     updateBarColor(j + 1, 'comparing');
-                    statusText.innerText = `比較: ${array[j]} 和 ${array[j+1]}`;
+                    statusText.innerText = `步驟 ${stepCount}: 比較 ${array[j]} 和 ${array[j+1]}`;
                     await sleep(delay);
 
                     // 比較大小
                     if (array[j] > array[j + 1]) {
-                        statusText.innerText = `交換: ${array[j]} > ${array[j+1]}，交換位置`;
+                        swapCount++;
+                        updateStats();
+                        statusText.innerText = `步驟 ${stepCount}: 交換 ${array[j]} > ${array[j+1]}`;
                         
                         // 視覺化：標記需要交換 (紅色)
                         updateBarColor(j, 'swapping');
@@ -310,7 +506,7 @@
 
                         // 視覺化：重新渲染高度 (交換外觀)
                         renderArray();
-                        // 重新上色因為 render 會重置 DOM，保持紅色一下下
+                        // 重新上色因為 render 會重置 DOM
                         updateBarColor(j, 'swapping');
                         updateBarColor(j + 1, 'swapping');
                         await sleep(delay);
@@ -321,17 +517,17 @@
                     updateBarColor(j + 1, '');
                 }
 
-                // 這一回合結束，最大的元素已經浮到最右邊 (n - i - 1)
+                // 這一回合結束，最大的元素已經浮到最右邊
                 // 視覺化：標記為已排序 (綠色)
                 updateBarColor(n - i - 1, 'sorted');
                 
                 // 優化：如果這一回合完全沒交換，代表已經排序完成，可以提早結束
                 if (!swapped) {
-                    statusText.innerText = "未發生交換，陣列已提早排序完成！";
+                    statusText.innerText = `步驟 ${stepCount}: 未發生交換，陣列已排序完成！`;
                     // 把剩下的全部標記為綠色
                     for(let k = 0; k < n - i - 1; k++) {
                         updateBarColor(k, 'sorted');
-                        await sleep(50); // 快速刷過去的效果
+                        await sleep(50);
                     }
                     break;
                 }
@@ -340,17 +536,18 @@
             // 確保第一個元素也被標記為綠色
             updateBarColor(0, 'sorted');
             
-            statusText.innerText = "排序完成！";
+            statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`;
             isSorting = false;
             btnGenerate.disabled = false;
             btnSort.disabled = false;
+            btnLoad.disabled = false;
+            btnReset.disabled = false;
         }
 
         // 輔助函式：改變特定 Bar 的顏色
         function updateBarColor(index, className) {
             const bar = document.getElementById(`bar-${index}`);
             if (bar) {
-                // 移除除了 bar 以外的所有 class，保留 bar
                 bar.className = 'bar'; 
                 if (className) {
                     bar.classList.add(className);
