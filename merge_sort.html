@@ -429,7 +429,7 @@
                         <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
                         <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
                         <button id="btn-sort" onclick="startMergeSort()">▶️ 開始排序</button>
-                        <button id="btn-step" onclick="stepSort()" disabled>⏯️ 步驟執行</button>
+                        <button id="btn-step" onclick="stepMergeSort()">⏯️ 單步執行</button>
                         <button id="btn-stop" onclick="stopSort()" disabled>⏹️ 停止</button>
                         <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
                     </div>
@@ -467,10 +467,8 @@
             </div>
 
             <div class="log-panel">
-                <h3>步驟日誌</h3>
-                <div class="log-body" id="log-body">
-                    <div class="log-entry">準備就緒 - 請載入或產生陣列</div>
-                </div>
+                <h3>📝 步驟紀錄</h3>
+                <div class="log-body" id="step-log"></div>
             </div>
         </div>
 
@@ -508,7 +506,7 @@ function merge(left, right) {
         let array = [];
         const container = document.getElementById('bars-container');
         const statusText = document.getElementById('status');
-        const logBody = document.getElementById('log-body');
+        const stepLog = document.getElementById('step-log');
         const btnGenerate = document.getElementById('btn-generate');
         const btnSort = document.getElementById('btn-sort');
         const btnStep = document.getElementById('btn-step');
@@ -534,14 +532,17 @@ function merge(left, right) {
             document.getElementById('speed-val').innerText = speedLabels[speedValue - 1];
         }
 
-        function addLogEntry(message) {
+        function clearStepLog() {
+            stepLog.innerHTML = '';
+        }
+
+        function logStep(message) {
             const entry = document.createElement('div');
             entry.className = 'log-entry';
-            entry.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
-            logBody.insertBefore(entry, logBody.firstChild);
-            // 限制日誌條目數量
-            while (logBody.children.length > 20) {
-                logBody.removeChild(logBody.lastChild);
+            entry.textContent = message;
+            stepLog.prepend(entry);
+            if (stepLog.childElementCount > 40) {
+                stepLog.removeChild(stepLog.lastChild);
             }
         }
 
@@ -558,7 +559,7 @@ function merge(left, right) {
             array = values.slice();
             renderArray();
             statusText.innerText = `已載入 ${array.length} 個元素的陣列`;
-            addLogEntry(`載入自定義陣列: [${array.join(', ')}]`);
+            logStep(`載入自定義陣列: [${array.join(', ')}]`);
             resetBarColors();
             resetStats();
         }
@@ -572,7 +573,7 @@ function merge(left, right) {
             }
             renderArray();
             statusText.innerText = `已產生 ${array.length} 個隨機元素的陣列`;
-            addLogEntry(`產生隨機陣列: [${array.join(', ')}]`);
+            logStep(`產生隨機陣列: [${array.join(', ')}]`);
             resetBarColors();
             resetStats();
             document.getElementById('array-input').value = array.join(',');
@@ -583,7 +584,7 @@ function merge(left, right) {
             resetBarColors();
             resetStats();
             statusText.innerText = '已重置，請重新開始排序';
-            addLogEntry('視覺化已重置');
+            clearStepLog();
             sortGenerator = null;
             isPaused = false;
             updateButtonStates();
@@ -631,7 +632,8 @@ function merge(left, right) {
         }
 
         function* createMergeGenerator(arr) {
-            yield* mergeSortGenerator(arr, 0, arr.length - 1);
+            const n = arr.length;
+            yield* mergeSortGenerator(arr, 0, n - 1);
         }
 
         function* mergeSortGenerator(arr, left, right) {
@@ -639,28 +641,12 @@ function merge(left, right) {
 
             const mid = Math.floor((left + right) / 2);
 
-            addLogEntry(`分割: 處理索引 ${left} 到 ${mid} (左半部)`);
-            statusText.innerText = `分割：處理索引 ${left} 到 ${mid}`;
-            yield { type: 'split', left, right: mid };
-
             yield* mergeSortGenerator(arr, left, mid);
-
-            addLogEntry(`分割: 處理索引 ${mid + 1} 到 ${right} (右半部)`);
-            statusText.innerText = `分割：處理索引 ${mid + 1} 到 ${right}`;
-            yield { type: 'split', left: mid + 1, right };
-
             yield* mergeSortGenerator(arr, mid + 1, right);
-
             yield* mergeGenerator(arr, left, mid, right);
         }
 
         function* mergeGenerator(arr, left, mid, right) {
-            mergeCount++;
-            updateStats();
-
-            addLogEntry(`開始合併: 索引 ${left} 到 ${right} (合併次數: ${mergeCount})`);
-            statusText.innerText = `合併：處理索引 ${left} 到 ${right}`;
-
             const leftCopy = arr.slice(left, mid + 1);
             const rightCopy = arr.slice(mid + 1, right + 1);
             let i = 0;
@@ -668,134 +654,156 @@ function merge(left, right) {
             let k = left;
 
             while (i < leftCopy.length && j < rightCopy.length) {
-                compareCount++;
-                stepCount++;
-                updateStats();
-
                 const leftVal = leftCopy[i];
                 const rightVal = rightCopy[j];
-                addLogEntry(`比較: ${leftVal} (位置 ${left + i}) vs ${rightVal} (位置 ${mid + 1 + j})`);
-                statusText.innerText = `合併：比較 ${leftVal} 和 ${rightVal}`;
 
-                const highlight = {};
-                for (let idx = left; idx <= right; idx++) {
-                    if (idx === k) highlight[idx] = 'merging';
-                    if (idx === left + i) highlight[idx] = 'comparing';
-                    if (idx === mid + 1 + j) highlight[idx] = 'comparing';
-                }
-                renderArray(highlight);
-                yield { type: 'compare', indices: [left + i, mid + 1 + j], mergeIndex: k };
+                yield {
+                    type: 'compare',
+                    indices: [left + i, mid + 1 + j],
+                    text: `比較第 ${left + i + 1} 與 ${mid + 1 + j + 1} 個元素：${leftVal} 和 ${rightVal}`
+                };
 
                 if (leftVal <= rightVal) {
                     arr[k] = leftVal;
-                    addLogEntry(`選擇左側元素: ${leftVal} 放入位置 ${k}`);
+                    yield {
+                        type: 'swap',
+                        indices: [k],
+                        text: `選擇左側元素 ${leftVal} 放入位置 ${k + 1}`
+                    };
                     i++;
                 } else {
                     arr[k] = rightVal;
-                    addLogEntry(`選擇右側元素: ${rightVal} 放入位置 ${k}`);
+                    yield {
+                        type: 'swap',
+                        indices: [k],
+                        text: `選擇右側元素 ${rightVal} 放入位置 ${k + 1}`
+                    };
                     j++;
                 }
 
-                renderArray();
-                yield { type: 'place', index: k, value: arr[k] };
+                yield { type: 'clear', indices: [k] };
                 k++;
             }
 
             while (i < leftCopy.length) {
                 arr[k] = leftCopy[i];
-                addLogEntry(`複製剩餘左側元素: ${leftCopy[i]} 放入位置 ${k}`);
-                stepCount++;
-                updateStats();
-                renderArray();
-                yield { type: 'place', index: k, value: arr[k] };
+                yield {
+                    type: 'swap',
+                    indices: [k],
+                    text: `複製剩餘左側元素 ${leftCopy[i]} 放入位置 ${k + 1}`
+                };
+                yield { type: 'clear', indices: [k] };
                 i++;
                 k++;
             }
 
             while (j < rightCopy.length) {
                 arr[k] = rightCopy[j];
-                addLogEntry(`複製剩餘右側元素: ${rightCopy[j]} 放入位置 ${k}`);
-                stepCount++;
-                updateStats();
-                renderArray();
-                yield { type: 'place', index: k, value: arr[k] };
+                yield {
+                    type: 'swap',
+                    indices: [k],
+                    text: `複製剩餘右側元素 ${rightCopy[j]} 放入位置 ${k + 1}`
+                };
+                yield { type: 'clear', indices: [k] };
                 j++;
                 k++;
             }
 
             for (let idx = left; idx <= right; idx++) {
-                updateBarColor(idx, 'sorted');
+                yield {
+                    type: 'sorted',
+                    index: idx,
+                    text: `位置 ${idx + 1} 已排序完成`
+                };
             }
-            addLogEntry(`合併完成: 索引 ${left} 到 ${right} 已排序`);
-            yield { type: 'sorted', range: [left, right] };
         }
 
-        async function startMergeSort() {
-            if (isSorting || array.length === 0) return;
-
+        async function runSort(auto) {
+            if (!sortGenerator) {
+                sortGenerator = createMergeGenerator(array);
+            }
             isSorting = true;
-            isPaused = false;
-            sortGenerator = createMergeGenerator(array.slice());
+            isAutoRun = auto;
             updateButtonStates();
 
-            addLogEntry('開始合併排序');
-            statusText.innerText = '開始合併排序...';
+            const next = sortGenerator.next();
+            if (next.done) {
+                finishSort();
+                return;
+            }
 
-            try {
-                for (const step of sortGenerator) {
-                    if (!isSorting) break;
-                    await sleep(delay);
-                }
-
-                if (isSorting) {
-                    statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${mergeCount} 次合併`;
-                    addLogEntry(`排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${mergeCount} 次合併`);
-                }
-            } catch (error) {
-                console.error('排序過程中發生錯誤:', error);
-                addLogEntry('排序過程中發生錯誤');
-            } finally {
+            applyStep(next.value);
+            if (shouldStop) {
                 isSorting = false;
-                isPaused = false;
-                sortGenerator = null;
+                isAutoRun = false;
+                updateButtonStates();
+                return;
+            }
+
+            if (auto) {
+                await sleep(delay);
+                if (!shouldStop) {
+                    runSort(true);
+                }
+            } else {
+                isSorting = false;
                 updateButtonStates();
             }
         }
 
-        async function stepSort() {
-            if (!sortGenerator || !isPaused) return;
-
-            try {
-                const result = sortGenerator.next();
-                if (result.done) {
-                    statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${mergeCount} 次合併`;
-                    addLogEntry(`排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${mergeCount} 次合併`);
-                    isSorting = false;
-                    isPaused = false;
-                    sortGenerator = null;
-                }
-            } catch (error) {
-                console.error('步驟執行中發生錯誤:', error);
-                addLogEntry('步驟執行中發生錯誤');
+        function startMergeSort() {
+            if (array.length === 0) return;
+            shouldStop = false;
+            if (!sortGenerator) {
+                sortGenerator = createMergeGenerator(array);
             }
-
-            updateButtonStates();
+            runSort(true);
         }
 
-        function stopSort() {
+        function stepMergeSort() {
+            if (array.length === 0) return;
+            shouldStop = false;
+            if (!sortGenerator) {
+                sortGenerator = createMergeGenerator(array);
+            }
+            runSort(false);
+        }
+
+        function finishSort() {
             isSorting = false;
-            isPaused = false;
+            isAutoRun = false;
             sortGenerator = null;
-            statusText.innerText = '排序已停止';
-            addLogEntry('排序已停止');
             updateButtonStates();
+            renderArray();
+            statusText.innerText = `排序完成！共 ${stepCount} 步，${compareCount} 次比較，${mergeCount} 次合併`;
         }
 
-        function updateBarColor(index, className) {
-            const bar = document.getElementById(`bar-${index}`);
-            if (bar) {
-                bar.className = 'bar';
-                if (className) bar.classList.add(className);
+        function applyStep(step) {
+            if (step.text) {
+                statusText.innerText = step.text;
+                logStep(step.text);
+            }
+            switch (step.type) {
+                case 'compare':
+                    stepCount += 1;
+                    compareCount += 1;
+                    updateStats();
+                    renderArray({ [step.indices[0]]: 'comparing', [step.indices[1]]: 'comparing' });
+                    break;
+                case 'swap':
+                    stepCount += 1;
+                    mergeCount += 1;
+                    updateStats();
+                    renderArray({ [step.indices[0]]: 'swapping', [step.indices[1]]: 'swapping' });
+                    break;
+                case 'clear':
+                    renderArray();
+                    break;
+                case 'sorted':
+                    renderArray({ [step.index]: 'sorted' });
+                    break;
+                default:
+                    renderArray();
             }
         }
 
