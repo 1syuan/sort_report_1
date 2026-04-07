@@ -124,6 +124,31 @@
             background: #f2f6fb;
         }
 
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .difficulty-easy {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .difficulty-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         .controls {
             display: grid;
             gap: 18px;
@@ -354,33 +379,45 @@
                     <tr>
                         <th>情況</th>
                         <th>時間複雜度</th>
+                        <th>空間複雜度</th>
                         <th>說明</th>
+                        <th>難易度</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>最佳</td>
                         <td>O(n)</td>
-                        <td>當陣列已經排序，且演算法偵測到無需交換時可提早結束。</td>
+                        <td>O(1)</td>
+                        <td>陣列已排序且無需交換時，演算法可於第一輪偵測到並提早結束。</td>
+                        <td><span class="difficulty-badge difficulty-easy">簡單</span></td>
                     </tr>
                     <tr>
                         <td>平均</td>
                         <td>O(n²)</td>
-                        <td>隨機排列的資料通常需要多次比較與交換。</td>
+                        <td>O(1)</td>
+                        <td>隨機資料需要多次比較與交換，通常需進行約 n²/2 次比較。</td>
+                        <td><span class="difficulty-badge difficulty-medium">中等</span></td>
                     </tr>
                     <tr>
                         <td>最壞</td>
                         <td>O(n²)</td>
-                        <td>陣列完全反序時，必須進行最多次交換。</td>
+                        <td>O(1)</td>
+                        <td>陣列完全反序時，需進行最多次比較與交換才能完成排序。</td>
+                        <td><span class="difficulty-badge difficulty-hard">困難</span></td>
                     </tr>
                     <tr>
                         <td>空間</td>
+                        <td>—</td>
                         <td>O(1)</td>
-                        <td>原地交換元素，不需要額外的暫存陣列。</td>
+                        <td>使用原地交換，不額外配置大型陣列，空間效率高。</td>
+                        <td><span class="difficulty-badge difficulty-easy">低</span></td>
                     </tr>
                     <tr>
                         <td>穩定性</td>
                         <td colspan="2">穩定</td>
+                        <td>相等元素的相對順序不會改變，適合需要穩定排序的場景。</td>
+                        <td><span class="difficulty-badge difficulty-easy">低</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -406,9 +443,9 @@
                 </div>
                 <div class="control-row">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <label for="speed">動畫速度：</label>
-                        <input type="range" id="speed" min="50" max="1000" value="450" oninput="updateSpeed()">
-                        <span id="speed-val">450ms</span>
+                        <label for="speed">動畫速度（右快左慢）：</label>
+                        <input type="range" id="speed" min="1" max="10" value="5" oninput="updateSpeed()">
+                        <span id="speed-val">中等</span>
                     </div>
                 </div>
                 <div class="stats">
@@ -481,7 +518,7 @@ function bubbleSort(arr) {
         let isSorting = false;
         let isAutoRun = false;
         let shouldStop = false;
-        let delay = 450;
+        let delay = 550;
         let stepCount = 0;
         let compareCount = 0;
         let swapCount = 0;
@@ -498,12 +535,15 @@ function bubbleSort(arr) {
 
         window.onload = function() {
             generateArray();
+            updateSpeed();
             updateButtons();
         };
 
         function updateSpeed() {
-            delay = Number(document.getElementById('speed').value);
-            document.getElementById('speed-val').innerText = delay + 'ms';
+            const speedLevel = Number(document.getElementById('speed').value);
+            delay = 1050 - speedLevel * 100;
+            const speedLabel = speedLevel <= 3 ? '慢' : speedLevel <= 7 ? '中等' : '快';
+            document.getElementById('speed-val').innerText = `${speedLabel} (${delay}ms)`;
         }
 
         function updateButtons() {
