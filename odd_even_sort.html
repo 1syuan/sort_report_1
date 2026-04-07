@@ -359,32 +359,62 @@
         <div class="info-section">
             <h2>1. 操作原理</h2>
             <p>奇偶排序法將排序過程分為奇數階段和偶數階段，交替進行比較和交換，類似於氣泡排序但更適合並行處理。</p>
-            <ul>
-                <li><strong>奇數階段：</strong>比較所有奇數索引位置的元素與其右邊相鄰元素（索引 1,3,5... 與 2,4,6...）。</li>
-                <li><strong>偶數階段：</strong>比較所有偶數索引位置的元素與其右邊相鄰元素（索引 0,2,4... 與 1,3,5...）。</li>
-                <li><strong>重複：</strong>交替進行奇偶階段，直到沒有交換發生。</li>
-            </ul>
+            <div class="highlight-box">
+                <strong>重點：</strong>奇偶排序是一種<strong>並行友好</strong>的排序方法。
+                <br>核心流程為：<strong>奇數階段比較</strong>、<strong>偶數階段比較</strong>、<strong>交替重複</strong>，適合多核心處理器。
+            </div>
+        </div>
 
         <!-- 2. 時間及空間複雜度 -->
         <div class="info-section">
             <h2>2. 時間及空間複雜度</h2>
-            <div class="complexity-grid">
-                <div class="card">
-                    <strong>時間複雜度 (平均/最差)</strong>
-                    <div style="font-size: 1.5em; color: var(--swap-color)">O(n²)</div>
-                    <small>需要多個階段的比較</small>
-                </div>
-                <div class="card">
-                    <strong>時間複雜度 (最佳)</strong>
-                    <div style="font-size: 1.5em; color: var(--sorted-color)">O(n)</div>
-                    <small>當陣列已經排序時 (需優化)</small>
-                </div>
-                <div class="card">
-                    <strong>空間複雜度</strong>
-                    <div style="font-size: 1.5em; color: var(--primary-color)">O(1)</div>
-                    <small>只需要一個暫存變數做交換</small>
-                </div>
-            </div>
+            <table class="complexity-table">
+                <thead>
+                    <tr>
+                        <th>情況</th>
+                        <th>時間複雜度</th>
+                        <th>空間複雜度</th>
+                        <th>說明</th>
+                        <th>難易度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>最佳</td>
+                        <td>O(n)</td>
+                        <td>O(1)</td>
+                        <td>當陣列已經排序時，只需要一次完整遍歷。</td>
+                        <td><span class="difficulty-badge difficulty-easy">簡單</span></td>
+                    </tr>
+                    <tr>
+                        <td>平均</td>
+                        <td>O(n²)</td>
+                        <td>O(1)</td>
+                        <td>需要多個階段的比較和交換操作。</td>
+                        <td><span class="difficulty-badge difficulty-hard">困難</span></td>
+                    </tr>
+                    <tr>
+                        <td>最壞</td>
+                        <td>O(n²)</td>
+                        <td>O(1)</td>
+                        <td>在最壞情況下需要多次完整的階段遍歷。</td>
+                        <td><span class="difficulty-badge difficulty-hard">困難</span></td>
+                    </tr>
+                    <tr>
+                        <td>空間</td>
+                        <td>—</td>
+                        <td>O(1)</td>
+                        <td>只需要一個暫存變數進行元素交換。</td>
+                        <td><span class="difficulty-badge difficulty-easy">簡單</span></td>
+                    </tr>
+                    <tr>
+                        <td>穩定性</td>
+                        <td colspan="2">不穩定</td>
+                        <td>相同元素的相對順序可能會改變。</td>
+                        <td><span class="difficulty-badge difficulty-medium">中等</span></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- 2. 視覺化演示 -->
@@ -398,12 +428,15 @@
                         <label for="array-input">自定義陣列 (逗號分隔):</label>
                         <input type="text" id="array-input" placeholder="例如: 64,34,25,12,22,11,90" value="64,34,25,12,22,11,90">
                     </div>
-                    <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
-                    <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
-                    <button id="btn-sort" onclick="startOddEvenSort()">▶️ 開始排序</button>
-                    <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
+                    <div class="action-buttons">
+                        <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
+                        <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
+                        <button id="btn-sort" onclick="startOddEvenSort()">▶️ 開始排序</button>
+                        <button id="btn-step" onclick="stepSort()" disabled>⏯️ 步驟執行</button>
+                        <button id="btn-stop" onclick="stopSort()" disabled>⏹️ 停止</button>
+                        <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
+                    </div>
                 </div>
-                
                 <div class="control-row">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <label for="speed">動畫速度（右快左慢）：</label>
@@ -411,7 +444,6 @@
                         <span id="speed-val">中等</span>
                     </div>
                 </div>
-
                 <div class="stats">
                     <div class="stat-item">
                         <div class="stat-value" id="step-count">0</div>
@@ -429,16 +461,19 @@
             </div>
 
             <div class="status-text" id="status">準備就緒 - 請載入或產生陣列</div>
-
-            <div class="bars-container" id="bars-container">
-                <!-- Bars will be generated here -->
-            </div>
-
+            <div class="bars-container" id="bars-container"></div>
             <div class="legend">
                 <div class="legend-item"><div class="dot" style="background:var(--primary-color)"></div>未排序</div>
                 <div class="legend-item"><div class="dot" style="background:var(--compare-color)"></div>比較中</div>
                 <div class="legend-item"><div class="dot" style="background:var(--swap-color)"></div>交換中</div>
                 <div class="legend-item"><div class="dot" style="background:var(--sorted-color)"></div>已排序</div>
+            </div>
+
+            <div class="log-panel">
+                <h3>步驟日誌</h3>
+                <div class="log-body" id="log-body">
+                    <div class="log-entry">準備就緒 - 請載入或產生陣列</div>
+                </div>
             </div>
         </div>
 
@@ -480,78 +515,90 @@
     </div>
 
     <script>
-        // 變數設定
         let array = [];
         const container = document.getElementById('bars-container');
         const statusText = document.getElementById('status');
+        const logBody = document.getElementById('log-body');
         const btnGenerate = document.getElementById('btn-generate');
         const btnSort = document.getElementById('btn-sort');
+        const btnStep = document.getElementById('btn-step');
+        const btnStop = document.getElementById('btn-stop');
         const btnLoad = document.getElementById('btn-load');
         const btnReset = document.getElementById('btn-reset');
         let delay = 500;
         let isSorting = false;
+        let isPaused = false;
+        let sortGenerator = null;
         let stepCount = 0;
         let compareCount = 0;
         let swapCount = 0;
 
-        // 初始化
         window.onload = function() {
             loadCustomArray();
         };
 
-        // 更新速度顯示
         function updateSpeed() {
-            delay = 1010 - document.getElementById('speed').value;
-            document.getElementById('speed-val').innerText = document.getElementById('speed').value + 'ms';
+            const speedValue = document.getElementById('speed').value;
+            delay = 1010 - speedValue * 100;
+            const speedLabels = ['很慢', '慢', '稍慢', '中等', '稍快', '快', '很快', '非常快', '極快', '極快'];
+            document.getElementById('speed-val').innerText = speedLabels[speedValue - 1];
         }
 
-        // 載入自定義陣列
+        function addLogEntry(message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            logBody.insertBefore(entry, logBody.firstChild);
+            // 限制日誌條目數量
+            while (logBody.children.length > 20) {
+                logBody.removeChild(logBody.lastChild);
+            }
+        }
+
         function loadCustomArray() {
             if (isSorting) return;
-            
             const input = document.getElementById('array-input').value;
             const values = input.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
-            
+
             if (values.length === 0) {
                 alert('請輸入有效的數字，用逗號分隔');
                 return;
             }
-            
+
             array = values.slice();
             renderArray();
             statusText.innerText = `已載入 ${array.length} 個元素的陣列`;
+            addLogEntry(`載入自定義陣列: [${array.join(', ')}]`);
             resetBarColors();
             resetStats();
         }
 
-        // 產生隨機陣列
         function generateArray() {
             if (isSorting) return;
-            
             array = [];
-            container.innerHTML = '';
-            // 產生 10-15 個 10~100 之間的隨機數字
             const length = Math.floor(Math.random() * 6) + 10;
             for (let i = 0; i < length; i++) {
                 array.push(Math.floor(Math.random() * 90) + 10);
             }
             renderArray();
             statusText.innerText = `已產生 ${array.length} 個隨機元素的陣列`;
+            addLogEntry(`產生隨機陣列: [${array.join(', ')}]`);
             resetBarColors();
             resetStats();
-            // 更新輸入框顯示
             document.getElementById('array-input').value = array.join(',');
         }
 
-        // 重置視覺化
         function resetVisualization() {
             if (isSorting) return;
             resetBarColors();
             resetStats();
-            statusText.innerText = "已重置，請重新開始排序";
+            statusText.innerText = '已重置，請重新開始排序';
+            addLogEntry('視覺化已重置');
+            sortGenerator = null;
+            isPaused = false;
+            updateButtonStates();
         }
 
-        // 重置統計
         function resetStats() {
             stepCount = 0;
             compareCount = 0;
@@ -559,15 +606,22 @@
             updateStats();
         }
 
-        // 更新統計顯示
         function updateStats() {
             document.getElementById('step-count').innerText = stepCount;
             document.getElementById('compare-count').innerText = compareCount;
             document.getElementById('swap-count').innerText = swapCount;
         }
 
-        // 渲染陣列到畫面上
-        function renderArray() {
+        function updateButtonStates() {
+            btnGenerate.disabled = isSorting;
+            btnSort.disabled = isSorting || array.length === 0;
+            btnStep.disabled = !isPaused || !sortGenerator;
+            btnStop.disabled = !isSorting && !isPaused;
+            btnLoad.disabled = isSorting;
+            btnReset.disabled = isSorting;
+        }
+
+        function renderArray(highlight = {}) {
             container.innerHTML = '';
             array.forEach((value, index) => {
                 const bar = document.createElement('div');
@@ -575,28 +629,24 @@
                 bar.style.height = `${value * 3}px`;
                 bar.innerText = value;
                 bar.id = `bar-${index}`;
+                if (highlight[index]) {
+                    bar.classList.add(highlight[index]);
+                }
                 container.appendChild(bar);
             });
         }
 
-        // 延遲函式 (用於動畫效果)
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // 奇偶排序主程式
-        async function startOddEvenSort() {
-            if (isSorting || array.length === 0) return;
-            isSorting = true;
-            btnGenerate.disabled = true;
-            btnSort.disabled = true;
-            btnLoad.disabled = true;
-            btnReset.disabled = true;
-
-            resetStats();
-            const n = array.length;
+        function* createOddEvenGenerator(arr) {
+            const n = arr.length;
             let sorted = false;
             let phase = 0; // 0: 偶數階段, 1: 奇數階段
+
+            addLogEntry('開始奇偶排序');
+            yield { type: 'start' };
 
             while (!sorted) {
                 sorted = true;
@@ -604,115 +654,175 @@
 
                 if (phase === 0) {
                     // 偶數階段：比較偶數索引與奇數索引
+                    addLogEntry(`開始偶數階段: 比較索引 0,2,4,... 與 1,3,5,...`);
                     statusText.innerText = `偶數階段：比較偶數索引位置`;
+                    yield { type: 'phase_start', phase: 'even' };
+
                     for (let i = 0; i < n - 1; i += 2) {
                         stepCount++;
                         compareCount++;
                         updateStats();
-                        
-                        // 視覺化：標記正在比較的兩個元素 (黃色)
-                        updateBarColor(i, 'comparing');
-                        updateBarColor(i + 1, 'comparing');
-                        statusText.innerText = `偶數階段：比較 ${array[i]} 和 ${array[i+1]}`;
-                        await sleep(delay);
 
-                        // 比較大小
-                        if (array[i] > array[i + 1]) {
+                        const leftVal = arr[i];
+                        const rightVal = arr[i + 1];
+                        addLogEntry(`比較: ${leftVal} (位置 ${i}) vs ${rightVal} (位置 ${i + 1})`);
+                        statusText.innerText = `偶數階段：比較 ${leftVal} 和 ${rightVal}`;
+
+                        const highlight = {};
+                        highlight[i] = 'comparing';
+                        highlight[i + 1] = 'comparing';
+                        renderArray(highlight);
+                        yield { type: 'compare', indices: [i, i + 1] };
+
+                        if (leftVal > rightVal) {
                             swapCount++;
                             updateStats();
-                            statusText.innerText = `偶數階段：交換 ${array[i]} > ${array[i+1]}`;
-                            
-                            // 視覺化：標記需要交換 (紅色)
-                            updateBarColor(i, 'swapping');
-                            updateBarColor(i + 1, 'swapping');
-                            await sleep(delay);
+                            addLogEntry(`交換: ${leftVal} > ${rightVal}，執行交換`);
+                            statusText.innerText = `偶數階段：交換 ${leftVal} > ${rightVal}`;
 
-                            // 執行交換 (資料層面)
-                            let temp = array[i];
-                            array[i] = array[i + 1];
-                            array[i + 1] = temp;
+                            const swapHighlight = {};
+                            swapHighlight[i] = 'swapping';
+                            swapHighlight[i + 1] = 'swapping';
+                            renderArray(swapHighlight);
+                            yield { type: 'swap_start', indices: [i, i + 1] };
+
+                            // 執行交換
+                            let temp = arr[i];
+                            arr[i] = arr[i + 1];
+                            arr[i + 1] = temp;
                             sorted = false;
 
-                            // 視覺化：重新渲染高度 (交換外觀)
                             renderArray();
-                            // 重新上色因為 render 會重置 DOM
-                            updateBarColor(i, 'swapping');
-                            updateBarColor(i + 1, 'swapping');
-                            await sleep(delay);
+                            yield { type: 'swap_complete', indices: [i, i + 1] };
+                        } else {
+                            addLogEntry(`無需交換: ${leftVal} <= ${rightVal}`);
                         }
-
-                        // 視覺化：恢復顏色 (藍色)
-                        updateBarColor(i, '');
-                        updateBarColor(i + 1, '');
                     }
+                    addLogEntry('偶數階段完成');
+                    yield { type: 'phase_end', phase: 'even' };
                 } else {
                     // 奇數階段：比較奇數索引與偶數索引
+                    addLogEntry(`開始奇數階段: 比較索引 1,3,5,... 與 2,4,6,...`);
                     statusText.innerText = `奇數階段：比較奇數索引位置`;
+                    yield { type: 'phase_start', phase: 'odd' };
+
                     for (let i = 1; i < n - 1; i += 2) {
                         stepCount++;
                         compareCount++;
                         updateStats();
-                        
-                        // 視覺化：標記正在比較的兩個元素 (黃色)
-                        updateBarColor(i, 'comparing');
-                        updateBarColor(i + 1, 'comparing');
-                        statusText.innerText = `奇數階段：比較 ${array[i]} 和 ${array[i+1]}`;
-                        await sleep(delay);
 
-                        // 比較大小
-                        if (array[i] > array[i + 1]) {
+                        const leftVal = arr[i];
+                        const rightVal = arr[i + 1];
+                        addLogEntry(`比較: ${leftVal} (位置 ${i}) vs ${rightVal} (位置 ${i + 1})`);
+                        statusText.innerText = `奇數階段：比較 ${leftVal} 和 ${rightVal}`;
+
+                        const highlight = {};
+                        highlight[i] = 'comparing';
+                        highlight[i + 1] = 'comparing';
+                        renderArray(highlight);
+                        yield { type: 'compare', indices: [i, i + 1] };
+
+                        if (leftVal > rightVal) {
                             swapCount++;
                             updateStats();
-                            statusText.innerText = `奇數階段：交換 ${array[i]} > ${array[i+1]}`;
-                            
-                            // 視覺化：標記需要交換 (紅色)
-                            updateBarColor(i, 'swapping');
-                            updateBarColor(i + 1, 'swapping');
-                            await sleep(delay);
+                            addLogEntry(`交換: ${leftVal} > ${rightVal}，執行交換`);
+                            statusText.innerText = `奇數階段：交換 ${leftVal} > ${rightVal}`;
 
-                            // 執行交換 (資料層面)
-                            let temp = array[i];
-                            array[i] = array[i + 1];
-                            array[i + 1] = temp;
+                            const swapHighlight = {};
+                            swapHighlight[i] = 'swapping';
+                            swapHighlight[i + 1] = 'swapping';
+                            renderArray(swapHighlight);
+                            yield { type: 'swap_start', indices: [i, i + 1] };
+
+                            // 執行交換
+                            let temp = arr[i];
+                            arr[i] = arr[i + 1];
+                            arr[i + 1] = temp;
                             sorted = false;
 
-                            // 視覺化：重新渲染高度 (交換外觀)
                             renderArray();
-                            // 重新上色因為 render 會重置 DOM
-                            updateBarColor(i, 'swapping');
-                            updateBarColor(i + 1, 'swapping');
-                            await sleep(delay);
+                            yield { type: 'swap_complete', indices: [i, i + 1] };
+                        } else {
+                            addLogEntry(`無需交換: ${leftVal} <= ${rightVal}`);
                         }
-
-                        // 視覺化：恢復顏色 (藍色)
-                        updateBarColor(i, '');
-                        updateBarColor(i + 1, '');
                     }
+                    addLogEntry('奇數階段完成');
+                    yield { type: 'phase_end', phase: 'odd' };
                 }
             }
 
-            // 排序完成，標記所有元素為已排序
+            // 排序完成
             for (let i = 0; i < n; i++) {
                 updateBarColor(i, 'sorted');
-                await sleep(50);
             }
-            
-            statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`;
-            isSorting = false;
-            btnGenerate.disabled = false;
-            btnSort.disabled = false;
-            btnLoad.disabled = false;
-            btnReset.disabled = false;
+            addLogEntry(`排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`);
+            yield { type: 'complete' };
         }
 
-        // 輔助函式：改變特定 Bar 的顏色
+        async function startOddEvenSort() {
+            if (isSorting || array.length === 0) return;
+
+            isSorting = true;
+            isPaused = false;
+            sortGenerator = createOddEvenGenerator(array.slice());
+            updateButtonStates();
+
+            statusText.innerText = '開始奇偶排序...';
+
+            try {
+                for (const step of sortGenerator) {
+                    if (!isSorting) break;
+                    await sleep(delay);
+                }
+
+                if (isSorting) {
+                    statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`;
+                }
+            } catch (error) {
+                console.error('排序過程中發生錯誤:', error);
+                addLogEntry('排序過程中發生錯誤');
+            } finally {
+                isSorting = false;
+                isPaused = false;
+                sortGenerator = null;
+                updateButtonStates();
+            }
+        }
+
+        async function stepSort() {
+            if (!sortGenerator || !isPaused) return;
+
+            try {
+                const result = sortGenerator.next();
+                if (result.done) {
+                    statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`;
+                    addLogEntry(`排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`);
+                    isSorting = false;
+                    isPaused = false;
+                    sortGenerator = null;
+                }
+            } catch (error) {
+                console.error('步驟執行中發生錯誤:', error);
+                addLogEntry('步驟執行中發生錯誤');
+            }
+
+            updateButtonStates();
+        }
+
+        function stopSort() {
+            isSorting = false;
+            isPaused = false;
+            sortGenerator = null;
+            statusText.innerText = '排序已停止';
+            addLogEntry('排序已停止');
+            updateButtonStates();
+        }
+
         function updateBarColor(index, className) {
             const bar = document.getElementById(`bar-${index}`);
             if (bar) {
-                bar.className = 'bar'; 
-                if (className) {
-                    bar.classList.add(className);
-                }
+                bar.className = 'bar';
+                if (className) bar.classList.add(className);
             }
         }
 
