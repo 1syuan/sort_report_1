@@ -7,6 +7,7 @@
     <style>
         :root {
             --primary-color: #3498db;
+            --secondary-color: #ff7f50;
             --compare-color: #f1c40f;
             --swap-color: #e74c3c;
             --sorted-color: #2ecc71;
@@ -14,6 +15,7 @@
             --text-color: #333;
             --surface: #ffffff;
             --border-color: #e9ecef;
+            --highlight-color: #fff4e8;
         }
 
         * {
@@ -92,11 +94,17 @@
         }
 
         .highlight-box {
-            border-left: 4px solid var(--primary-color);
-            background: #eef6ff;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 16px;
+            border-left: 4px solid var(--secondary-color);
+            background: var(--highlight-color);
+            color: #3a2a18;
+            padding: 18px;
+            border-radius: 14px;
+            margin-top: 18px;
+            box-shadow: inset 0 0 0 1px rgba(255, 127, 80, 0.15);
+        }
+
+        .highlight-box strong {
+            color: var(--secondary-color);
         }
 
         .complexity-table {
@@ -114,6 +122,31 @@
 
         .complexity-table th {
             background: #f2f6fb;
+        }
+
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .difficulty-easy {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .difficulty-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .controls {
@@ -321,57 +354,103 @@
     </header>
 
     <div class="container">
+        <!-- 1. 操作原理 -->
         <div class="info-section">
-            <h2>📖 操作原理</h2>
-            <p>選擇排序法的原理是：每一輪從「未排序部分」中尋找最小的元素，並將它與未排序部分的「第一個元素」交換位置。</p>
+            <h2>1. 操作原理</h2>
+            <p>選擇排序法透過重複從未排序部分選取最小元素，放置在已排序部分的末尾。每一輪都會找到當前未排序序列中的最小值，並與未排序部分的起始位置交換。</p>
             <ul>
-                <li><strong>步驟 1：</strong>在未排序序列中找到最小元素。</li>
-                <li><strong>步驟 2：</strong>將該元素與未排序序列的起始位置交換。</li>
-                <li><strong>重複：</strong>移動到下一個位置，重複上述過程，直到整個陣列排序完成。</li>
+                <li><strong>第 1 步：</strong>從未排序序列中尋找最小元素的位置。</li>
+                <li><strong>第 2 步：</strong>將找到的最小元素與未排序序列的起始位置交換。</li>
+                <li><strong>第 3 步：</strong>已排序部分增加一個元素，未排序部分減少一個元素。</li>
+                <li><strong>重複：</strong>重複上述步驟，直到整個陣列排序完成。</li>
             </ul>
-
-            <h3>📊 演算法複雜度</h3>
-            <div class="complexity-grid">
-                <div class="card">
-                    <strong>時間複雜度 (最佳/最差)</strong>
-                    <div style="font-size: 1.5em; color: var(--swap-color)">O(n²)</div>
-                    <small>不論是否已排序，皆需掃描剩餘元素</small>
-                </div>
-                <div class="card">
-                    <strong>空間複雜度</strong>
-                    <div style="font-size: 1.5em; color: var(--primary-color)">O(1)</div>
-                    <small>原地排序，僅需極少額外空間</small>
-                </div>
+            <div class="highlight-box">
+                <strong>重點：</strong>選擇排序是一種<strong>不穩定</strong>、<strong>原地排序</strong>的方法。
+                <br>核心流程為：<strong>尋找最小值</strong>、<strong>交換位置</strong>，逐步擴展已排序區域。
             </div>
         </div>
 
+        <!-- 2. 時間及空間複雜度 -->
+        <div class="info-section">
+            <h2>2. 時間及空間複雜度</h2>
+            <table class="complexity-table">
+                <thead>
+                    <tr>
+                        <th>情況</th>
+                        <th>時間複雜度</th>
+                        <th>空間複雜度</th>
+                        <th>說明</th>
+                        <th>難易度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>最佳</td>
+                        <td>O(n²)</td>
+                        <td>O(1)</td>
+                        <td>即使陣列已排序，仍需掃描所有元素尋找最小值。</td>
+                        <td><span class="difficulty-badge difficulty-hard">困難</span></td>
+                    </tr>
+                    <tr>
+                        <td>平均</td>
+                        <td>O(n²)</td>
+                        <td>O(1)</td>
+                        <td>每次都需要掃描剩餘未排序元素，比較次數固定。</td>
+                        <td><span class="difficulty-badge difficulty-hard">困難</span></td>
+                    </tr>
+                    <tr>
+                        <td>最壞</td>
+                        <td>O(n²)</td>
+                        <td>O(1)</td>
+                        <td>無論輸入順序如何，時間複雜度始終為 O(n²)。</td>
+                        <td><span class="difficulty-badge difficulty-hard">困難</span></td>
+                    </tr>
+                    <tr>
+                        <td>空間</td>
+                        <td>—</td>
+                        <td>O(1)</td>
+                        <td>原地排序，不需要額外的暫存陣列。</td>
+                        <td><span class="difficulty-badge difficulty-easy">低</span></td>
+                    </tr>
+                    <tr>
+                        <td>穩定性</td>
+                        <td colspan="2">不穩定</td>
+                        <td>相同元素的相對順序可能會改變。</td>
+                        <td><span class="difficulty-badge difficulty-medium">中等</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 3. 互動視覺化 -->
         <div class="visualization-area">
-            <h2>🎯 過程演示</h2>
-            
+            <h2>3. 互動視覺化</h2>
             <div class="controls">
                 <div class="control-row">
                     <div class="input-group">
-                        <label for="array-input">自定義陣列 (逗號分隔):</label>
+                        <label for="array-input">自定義陣列 (逗號分隔)：</label>
                         <input type="text" id="array-input" placeholder="例如: 64,34,25,12,22,11,90" value="64,34,25,12,22,11,90">
                     </div>
-                    <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
-                    <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
-                    <button id="btn-sort" onclick="startSelectionSort()">▶️ 開始排序</button>
-                    <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
-                </div>
-                
-                <div class="control-row">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <label for="speed">動畫速度:</label>
-                        <input type="range" id="speed" min="10" max="1000" value="500" oninput="updateSpeed()">
-                        <span id="speed-val">500ms</span>
+                    <div class="action-buttons">
+                        <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
+                        <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
+                        <button id="btn-sort" onclick="startSelectionSort()">▶️ 開始排序</button>
+                        <button id="btn-step" onclick="stepSelectionSort()">⏭️ 單步執行</button>
+                        <button id="btn-stop" onclick="stopSort()">⏹️ 停止</button>
+                        <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
                     </div>
                 </div>
-
+                <div class="control-row">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="speed">動畫速度（右快左慢）：</label>
+                        <input type="range" id="speed" min="1" max="10" value="5" oninput="updateSpeed()">
+                        <span id="speed-val">中等</span>
+                    </div>
+                </div>
                 <div class="stats">
                     <div class="stat-item">
                         <div class="stat-value" id="step-count">0</div>
-                        <div class="stat-label">步驟</div>
+                        <div class="stat-label">步驟數</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="compare-count">0</div>
@@ -386,9 +465,7 @@
 
             <div class="status-text" id="status">準備就緒 - 請載入或產生陣列</div>
 
-            <div class="bars-container" id="bars-container">
-                <!-- Bars will be generated here -->
-            </div>
+            <div class="bars-container" id="bars-container"></div>
 
             <div class="legend">
                 <div class="legend-item"><div class="dot" style="background:var(--primary-color)"></div>未排序</div>
@@ -396,28 +473,37 @@
                 <div class="legend-item"><div class="dot" style="background:var(--swap-color)"></div>當前最小值</div>
                 <div class="legend-item"><div class="dot" style="background:var(--sorted-color)"></div>已排序</div>
             </div>
+
+            <div class="log-panel">
+                <h3>📝 步驟紀錄</h3>
+                <div class="log-body" id="step-log"></div>
+            </div>
         </div>
 
-        <!-- 程式碼展示 -->
+        <!-- 4. 偽代碼及實作範例 -->
         <div class="code-section">
-            <h3>💻 選擇排序法程式碼 (JavaScript)</h3>
-            <div class="code-block">function selectionSort(arr) {
-    let n = arr.length;
+            <h2>4. 偽代碼及實作範例</h2>
+            <div class="code-block">// 偽代碼
+for i := 0 to n - 2
+    minIdx := i
+    for j := i + 1 to n - 1
+        if A[j] < A[minIdx]
+            minIdx := j
+    if minIdx != i
+        swap(A[i], A[minIdx])
+
+// JavaScript 範例
+function selectionSort(arr) {
+    const n = arr.length;
     for (let i = 0; i < n - 1; i++) {
         let minIdx = i;
-        
-        // 尋找從 i 到 n-1 中最小的元素
         for (let j = i + 1; j < n; j++) {
             if (arr[j] < arr[minIdx]) {
                 minIdx = j;
             }
         }
-        
-        // 將找到的最小元素與位置 i 的元素交換
         if (minIdx !== i) {
-            let temp = arr[i];
-            arr[i] = arr[minIdx];
-            arr[minIdx] = temp;
+            [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
         }
     }
     return arr;
@@ -427,67 +513,88 @@
 
     <script>
         let array = [];
-        let delay = 500;
+        let sortGenerator = null;
         let isSorting = false;
-        const container = document.getElementById('bars-container');
-        const statusText = document.getElementById('status');
-        const btnGenerate = document.getElementById('btn-generate');
-        const btnSort = document.getElementById('btn-sort');
-        const btnLoad = document.getElementById('btn-load');
-        const btnReset = document.getElementById('btn-reset');
+        let isAutoRun = false;
+        let shouldStop = false;
+        let delay = 550;
         let stepCount = 0;
         let compareCount = 0;
         let swapCount = 0;
 
+        const container = document.getElementById('bars-container');
+        const statusText = document.getElementById('status');
+        const stepLog = document.getElementById('step-log');
+        const btnGenerate = document.getElementById('btn-generate');
+        const btnSort = document.getElementById('btn-sort');
+        const btnStep = document.getElementById('btn-step');
+        const btnStop = document.getElementById('btn-stop');
+        const btnLoad = document.getElementById('btn-load');
+        const btnReset = document.getElementById('btn-reset');
+
         window.onload = function() {
-            loadCustomArray();
+            generateArray();
+            updateSpeed();
+            updateButtons();
         };
 
         function updateSpeed() {
-            delay = 1010 - document.getElementById('speed').value;
-            document.getElementById('speed-val').innerText = document.getElementById('speed').value + 'ms';
+            const speedLevel = Number(document.getElementById('speed').value);
+            delay = 1050 - speedLevel * 100;
+            const speedLabel = speedLevel <= 3 ? '慢' : speedLevel <= 7 ? '中等' : '快';
+            document.getElementById('speed-val').innerText = `${speedLabel} (${delay}ms)`;
+        }
+
+        function updateButtons() {
+            btnGenerate.disabled = isSorting;
+            btnLoad.disabled = isSorting;
+            btnReset.disabled = isSorting;
+            btnSort.disabled = isSorting && isAutoRun;
+            btnStep.disabled = isSorting && isAutoRun;
+            btnStop.disabled = !isSorting;
         }
 
         function loadCustomArray() {
             if (isSorting) return;
-            
             const input = document.getElementById('array-input').value;
-            const values = input.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
-            
+            const values = input.split(',').map(v => parseInt(v.trim(), 10)).filter(v => !Number.isNaN(v));
             if (values.length === 0) {
                 alert('請輸入有效的數字，用逗號分隔');
                 return;
             }
-            
             array = values.slice();
+            resetSortingState();
             renderArray();
             statusText.innerText = `已載入 ${array.length} 個元素的陣列`;
-            resetBarColors();
-            resetStats();
         }
 
         function generateArray() {
             if (isSorting) return;
-            array = Array.from({length: Math.floor(Math.random() * 6) + 10}, () => Math.floor(Math.random() * 90) + 10);
+            array = Array.from({ length: Math.floor(Math.random() * 6) + 10 }, () => Math.floor(Math.random() * 90) + 10);
+            document.getElementById('array-input').value = array.join(',');
+            resetSortingState();
             renderArray();
             statusText.innerText = `已產生 ${array.length} 個隨機元素的陣列`;
-            resetBarColors();
-            resetStats();
-            document.getElementById('array-input').value = array.join(',');
         }
 
         function resetVisualization() {
-            if (isSorting) return;
-            resetBarColors();
-            resetStats();
-            statusText.innerText = "已重置，請重新開始排序";
+            stopSort();
+            resetSortingState();
+            renderArray();
+            statusText.innerText = '已重置，請重新開始排序';
         }
 
-        function resetStats() {
+        function resetSortingState() {
+            sortGenerator = null;
+            isSorting = false;
+            isAutoRun = false;
+            shouldStop = false;
             stepCount = 0;
             compareCount = 0;
             swapCount = 0;
             updateStats();
+            clearStepLog();
+            updateButtons();
         }
 
         function updateStats() {
@@ -496,95 +603,192 @@
             document.getElementById('swap-count').innerText = swapCount;
         }
 
-        function renderArray() {
+        function clearStepLog() {
+            stepLog.innerHTML = '';
+        }
+
+        function logStep(message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = message;
+            stepLog.prepend(entry);
+            if (stepLog.childElementCount > 40) {
+                stepLog.removeChild(stepLog.lastChild);
+            }
+        }
+
+        function renderArray(highlights = {}) {
             container.innerHTML = '';
             array.forEach((value, index) => {
                 const bar = document.createElement('div');
                 bar.className = 'bar';
                 bar.style.height = `${value * 3}px`;
-                bar.innerText = value;
-                bar.id = `bar-${index}`;
+                bar.textContent = value;
+                if (highlights[index]) {
+                    bar.classList.add(highlights[index]);
+                }
                 container.appendChild(bar);
             });
         }
 
-        function updateBarColor(index, className) {
-            const bar = document.getElementById(`bar-${index}`);
-            if (bar) {
-                bar.className = 'bar';
-                if (className) {
-                    bar.classList.add(className);
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function stopSort() {
+            shouldStop = true;
+            isAutoRun = false;
+            isSorting = false;
+            statusText.innerText = '已停止排序，您可以單步或重新啟動。';
+            updateButtons();
+        }
+
+        async function runSort(auto) {
+            if (!sortGenerator) {
+                sortGenerator = createSelectionGenerator();
+            }
+            isSorting = true;
+            isAutoRun = auto;
+            updateButtons();
+
+            const next = sortGenerator.next();
+            if (next.done) {
+                finishSort();
+                return;
+            }
+
+            applyStep(next.value);
+            if (shouldStop) {
+                isSorting = false;
+                isAutoRun = false;
+                updateButtons();
+                return;
+            }
+
+            if (auto) {
+                await sleep(delay);
+                if (!shouldStop) {
+                    runSort(true);
                 }
+            } else {
+                isSorting = false;
+                updateButtons();
             }
         }
 
-        function resetBarColors() {
-            const bars = document.querySelectorAll('.bar');
-            bars.forEach(bar => bar.className = 'bar');
+        function startSelectionSort() {
+            if (array.length === 0) return;
+            shouldStop = false;
+            if (!sortGenerator) {
+                sortGenerator = createSelectionGenerator();
+            }
+            runSort(true);
         }
 
-        async function startSelectionSort() {
-            if (isSorting || array.length === 0) return;
-            isSorting = true;
-            btnGenerate.disabled = true;
-            btnSort.disabled = true;
-            btnLoad.disabled = true;
-            btnReset.disabled = true;
+        function stepSelectionSort() {
+            if (array.length === 0) return;
+            shouldStop = false;
+            if (!sortGenerator) {
+                sortGenerator = createSelectionGenerator();
+            }
+            runSort(false);
+        }
 
-            resetStats();
+        function finishSort() {
+            isSorting = false;
+            isAutoRun = false;
+            sortGenerator = null;
+            updateButtons();
+            renderArray();
+            statusText.innerText = `排序完成！共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`;
+        }
+
+        function applyStep(step) {
+            if (step.text) {
+                statusText.innerText = step.text;
+                logStep(step.text);
+            }
+            switch (step.type) {
+                case 'start-search':
+                    stepCount += 1;
+                    updateStats();
+                    renderArray({ [step.index]: 'comparing' });
+                    break;
+                case 'compare':
+                    compareCount += 1;
+                    updateStats();
+                    renderArray({ [step.index]: 'comparing', [step.minIdx]: 'swapping' });
+                    break;
+                case 'swap':
+                    stepCount += 1;
+                    swapCount += 1;
+                    updateStats();
+                    renderArray({ [step.indices[0]]: 'swapping', [step.indices[1]]: 'swapping' });
+                    break;
+                case 'sorted':
+                    renderArray({ [step.index]: 'sorted' });
+                    break;
+                default:
+                    renderArray();
+            }
+        }
+
+        function* createSelectionGenerator() {
             const n = array.length;
-            
             for (let i = 0; i < n - 1; i++) {
-                stepCount++;
                 let minIdx = i;
-                updateBarColor(i, 'comparing');
-                statusText.innerText = `步驟 ${stepCount}: 第 ${i+1} 輪，尋找剩餘部分的最小值`;
-                await new Promise(r => setTimeout(r, delay));
+                yield {
+                    type: 'start-search',
+                    index: i,
+                    text: `第 ${i + 1} 輪：從位置 ${i + 1} 開始尋找最小值`
+                };
 
                 for (let j = i + 1; j < n; j++) {
-                    compareCount++;
-                    updateStats();
-                    updateBarColor(j, 'comparing');
-                    
+                    yield {
+                        type: 'compare',
+                        index: j,
+                        minIdx: minIdx,
+                        text: `比較位置 ${j + 1} 的值 ${array[j]} 與當前最小值 ${array[minIdx]}`
+                    };
                     if (array[j] < array[minIdx]) {
-                        if (minIdx !== i) updateBarColor(minIdx, '');
                         minIdx = j;
-                        updateBarColor(minIdx, 'swapping');
-                        statusText.innerText = `步驟 ${stepCount}: 找到更小的值 ${array[j]} 在位置 ${j}`;
-                    } else {
-                        statusText.innerText = `步驟 ${stepCount}: ${array[j]} >= ${array[minIdx]}，繼續搜尋`;
+                        yield {
+                            type: 'compare',
+                            index: j,
+                            minIdx: minIdx,
+                            text: `找到更小的值！位置 ${j + 1} 的 ${array[j]} 成為新的最小值`
+                        };
                     }
-                    
-                    await new Promise(r => setTimeout(r, delay));
-                    if (j !== minIdx) updateBarColor(j, '');
                 }
 
                 if (minIdx !== i) {
-                    swapCount++;
-                    updateStats();
-                    statusText.innerText = `步驟 ${stepCount}: 交換 ${array[i]} 與最小值 ${array[minIdx]}`;
-                    updateBarColor(i, 'swapping');
+                    yield {
+                        type: 'swap',
+                        indices: [i, minIdx],
+                        text: `交換位置 ${i + 1} 的 ${array[i]} 與位置 ${minIdx + 1} 的最小值 ${array[minIdx]}`
+                    };
                     [array[i], array[minIdx]] = [array[minIdx], array[i]];
-                    await new Promise(r => setTimeout(r, delay));
-                    renderArray();
                 } else {
-                    statusText.innerText = `步驟 ${stepCount}: 位置 ${i} 已是正確的最小值`;
+                    yield {
+                        type: 'start-search',
+                        index: i,
+                        text: `位置 ${i + 1} 已是正確的最小值，無需交換`
+                    };
                 }
 
-                // 標記已排序的部分
-                for(let k = 0; k <= i; k++) updateBarColor(k, 'sorted');
-                await new Promise(r => setTimeout(r, delay));
+                yield {
+                    type: 'sorted',
+                    index: i,
+                    text: `位置 ${i + 1} 已排序完成`
+                };
             }
-
-            // 最後一個元素也標記為已排序
-            updateBarColor(n - 1, 'sorted');
-            
-            statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${swapCount} 次交換`;
-            isSorting = false;
-            btnGenerate.disabled = false;
-            btnSort.disabled = false;
-            btnLoad.disabled = true;
-            btnReset.disabled = false;
+            for (let k = 0; k < n; k++) {
+                yield {
+                    type: 'sorted',
+                    index: k,
+                    text: `最終結果：位置 ${k + 1} 的值為 ${array[k]}`
+                };
+            }
         }
     </script>
 </body>

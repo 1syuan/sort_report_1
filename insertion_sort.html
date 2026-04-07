@@ -7,6 +7,7 @@
     <style>
         :root {
             --primary-color: #3498db;
+            --secondary-color: #ff7f50;
             --compare-color: #f1c40f;
             --swap-color: #e74c3c;
             --sorted-color: #2ecc71;
@@ -14,6 +15,7 @@
             --text-color: #333;
             --surface: #ffffff;
             --border-color: #e9ecef;
+            --highlight-color: #fff4e8;
         }
 
         * {
@@ -92,11 +94,17 @@
         }
 
         .highlight-box {
-            border-left: 4px solid var(--primary-color);
-            background: #eef6ff;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 16px;
+            border-left: 4px solid var(--secondary-color);
+            background: var(--highlight-color);
+            color: #3a2a18;
+            padding: 18px;
+            border-radius: 14px;
+            margin-top: 18px;
+            box-shadow: inset 0 0 0 1px rgba(255, 127, 80, 0.15);
+        }
+
+        .highlight-box strong {
+            color: var(--secondary-color);
         }
 
         .complexity-table {
@@ -114,6 +122,31 @@
 
         .complexity-table th {
             background: #f2f6fb;
+        }
+
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .difficulty-easy {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .difficulty-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .controls {
@@ -321,63 +354,103 @@
     </header>
 
     <div class="container">
+        <!-- 1. 操作原理 -->
         <div class="info-section">
-            <h2>📖 操作原理</h2>
-            <p>插入排序法的工作原理是將序列分為「已排序」和「未排序」兩部分。每一輪從未排序部分取出一個元素，將其插入到已排序部分的適當位置。</p>
+            <h2>1. 操作原理</h2>
+            <p>插入排序法的工作原理是將序列分為「已排序」和「未排序」兩部分。每一輪從未排序部分取出一個元素，將其插入到已排序部分的適當位置，就像整理手中的撲克牌一樣。</p>
             <ul>
-                <li><strong>步驟 1：</strong>從第二個元素開始（假設第一個元素已排序）。</li>
-                <li><strong>步驟 2：</strong>取出該元素，與左側已排序的元素逐一比較。</li>
-                <li><strong>步驟 3：</strong>若左側元素較大，則將其右移。</li>
-                <li><strong>步驟 4：</strong>找到正確位置後，將元素插入。</li>
+                <li><strong>第 1 步：</strong>從第二個元素開始（假設第一個元素已排序）。</li>
+                <li><strong>第 2 步：</strong>取出該元素，與左側已排序的元素逐一比較。</li>
+                <li><strong>第 3 步：</strong>若左側元素較大，則將其右移，為插入元素騰出空間。</li>
+                <li><strong>第 4 步：</strong>找到正確位置後，將元素插入。</li>
             </ul>
-
-            <h3>📊 演算法複雜度</h3>
-            <div class="complexity-grid">
-                <div class="card">
-                    <strong>時間複雜度 (平均/最差)</strong>
-                    <div style="font-size: 1.5em; color: var(--swap-color)">O(n²)</div>
-                    <small>當陣列完全反序時效率最低</small>
-                </div>
-                <div class="card">
-                    <strong>時間複雜度 (最佳)</strong>
-                    <div style="font-size: 1.5em; color: var(--sorted-color)">O(n)</div>
-                    <small>當陣列已經排序好時</small>
-                </div>
-                <div class="card">
-                    <strong>空間複雜度</strong>
-                    <div style="font-size: 1.5em; color: var(--primary-color)">O(1)</div>
-                    <small>原地排序，僅需一個額外空間暫存當前元素</small>
-                </div>
+            <div class="highlight-box">
+                <strong>重點：</strong>插入排序是一種<strong>穩定</strong>、<strong>原地排序</strong>的方法。
+                <br>核心流程為：<strong>取出元素</strong>、<strong>比較移動</strong>、<strong>插入位置</strong>，適合處理部分有序的資料。
             </div>
         </div>
 
+        <!-- 2. 時間及空間複雜度 -->
+        <div class="info-section">
+            <h2>2. 時間及空間複雜度</h2>
+            <table class="complexity-table">
+                <thead>
+                    <tr>
+                        <th>情況</th>
+                        <th>時間複雜度</th>
+                        <th>空間複雜度</th>
+                        <th>說明</th>
+                        <th>難易度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>最佳</td>
+                        <td>O(n)</td>
+                        <td>O(1)</td>
+                        <td>當陣列已經排序時，只需 n-1 次比較，無需移動元素。</td>
+                        <td><span class="difficulty-badge difficulty-easy">簡單</span></td>
+                    </tr>
+                    <tr>
+                        <td>平均</td>
+                        <td>O(n²)</td>
+                        <td>O(1)</td>
+                        <td>隨機資料需要多次比較和移動，平均比較次數約為 n²/4。</td>
+                        <td><span class="difficulty-badge difficulty-medium">中等</span></td>
+                    </tr>
+                    <tr>
+                        <td>最壞</td>
+                        <td>O(n²)</td>
+                        <td>O(1)</td>
+                        <td>陣列完全反序時，每個元素都需要與前面所有元素比較並移動。</td>
+                        <td><span class="difficulty-badge difficulty-hard">困難</span></td>
+                    </tr>
+                    <tr>
+                        <td>空間</td>
+                        <td>—</td>
+                        <td>O(1)</td>
+                        <td>原地排序，只需要一個額外空間來暫存當前處理的元素。</td>
+                        <td><span class="difficulty-badge difficulty-easy">低</span></td>
+                    </tr>
+                    <tr>
+                        <td>穩定性</td>
+                        <td colspan="2">穩定</td>
+                        <td>相同元素的相對順序不會改變，適合需要穩定排序的場景。</td>
+                        <td><span class="difficulty-badge difficulty-easy">低</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 3. 互動視覺化 -->
         <div class="visualization-area">
-            <h2>📥 過程演示</h2>
-            
+            <h2>3. 互動視覺化</h2>
             <div class="controls">
                 <div class="control-row">
                     <div class="input-group">
-                        <label for="array-input">自定義陣列 (逗號分隔):</label>
+                        <label for="array-input">自定義陣列 (逗號分隔)：</label>
                         <input type="text" id="array-input" placeholder="例如: 64,34,25,12,22,11,90" value="64,34,25,12,22,11,90">
                     </div>
-                    <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
-                    <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
-                    <button id="btn-sort" onclick="startInsertionSort()">▶️ 開始排序</button>
-                    <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
-                </div>
-                
-                <div class="control-row">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <label for="speed">動畫速度:</label>
-                        <input type="range" id="speed" min="10" max="1000" value="500" oninput="updateSpeed()">
-                        <span id="speed-val">500ms</span>
+                    <div class="action-buttons">
+                        <button id="btn-load" onclick="loadCustomArray()">📥 載入陣列</button>
+                        <button id="btn-generate" onclick="generateArray()">🔄 隨機產生</button>
+                        <button id="btn-sort" onclick="startInsertionSort()">▶️ 開始排序</button>
+                        <button id="btn-step" onclick="stepInsertionSort()">⏭️ 單步執行</button>
+                        <button id="btn-stop" onclick="stopSort()">⏹️ 停止</button>
+                        <button id="btn-reset" onclick="resetVisualization()">🔄 重置</button>
                     </div>
                 </div>
-
+                <div class="control-row">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="speed">動畫速度（右快左慢）：</label>
+                        <input type="range" id="speed" min="1" max="10" value="5" oninput="updateSpeed()">
+                        <span id="speed-val">中等</span>
+                    </div>
+                </div>
                 <div class="stats">
                     <div class="stat-item">
                         <div class="stat-value" id="step-count">0</div>
-                        <div class="stat-label">步驟</div>
+                        <div class="stat-label">步驟數</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="compare-count">0</div>
@@ -392,9 +465,7 @@
 
             <div class="status-text" id="status">準備就緒 - 請載入或產生陣列</div>
 
-            <div class="bars-container" id="bars-container">
-                <!-- Bars will be generated here -->
-            </div>
+            <div class="bars-container" id="bars-container"></div>
 
             <div class="legend">
                 <div class="legend-item"><div class="dot" style="background:var(--primary-color)"></div>未排序</div>
@@ -402,23 +473,38 @@
                 <div class="legend-item"><div class="dot" style="background:var(--swap-color)"></div>當前元素</div>
                 <div class="legend-item"><div class="dot" style="background:var(--sorted-color)"></div>已排序</div>
             </div>
+
+            <div class="log-panel">
+                <h3>📝 步驟紀錄</h3>
+                <div class="log-body" id="step-log"></div>
+            </div>
         </div>
 
-        <!-- 程式碼展示 -->
+        <!-- 4. 偽代碼及實作範例 -->
         <div class="code-section">
-            <h3>💻 插入排序法程式碼 (JavaScript)</h3>
-            <div class="code-block">function insertionSort(arr) {
-    let n = arr.length;
+            <h2>4. 偽代碼及實作範例</h2>
+            <div class="code-block">// 偽代碼
+for i := 1 to n - 1
+    key := A[i]
+    j := i - 1
+    while j >= 0 and A[j] > key
+        A[j + 1] := A[j]
+        j := j - 1
+    A[j + 1] := key
+
+// JavaScript 範例
+function insertionSort(arr) {
+    const n = arr.length;
     for (let i = 1; i < n; i++) {
         let key = arr[i];
         let j = i - 1;
-        
+
         // 將大於 key 的元素向右移動
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j = j - 1;
         }
-        
+
         // 將 key 插入正確位置
         arr[j + 1] = key;
     }
@@ -429,67 +515,88 @@
 
     <script>
         let array = [];
-        let delay = 500;
+        let sortGenerator = null;
         let isSorting = false;
-        const container = document.getElementById('bars-container');
-        const statusText = document.getElementById('status');
-        const btnGenerate = document.getElementById('btn-generate');
-        const btnSort = document.getElementById('btn-sort');
-        const btnLoad = document.getElementById('btn-load');
-        const btnReset = document.getElementById('btn-reset');
+        let isAutoRun = false;
+        let shouldStop = false;
+        let delay = 550;
         let stepCount = 0;
         let compareCount = 0;
         let shiftCount = 0;
 
+        const container = document.getElementById('bars-container');
+        const statusText = document.getElementById('status');
+        const stepLog = document.getElementById('step-log');
+        const btnGenerate = document.getElementById('btn-generate');
+        const btnSort = document.getElementById('btn-sort');
+        const btnStep = document.getElementById('btn-step');
+        const btnStop = document.getElementById('btn-stop');
+        const btnLoad = document.getElementById('btn-load');
+        const btnReset = document.getElementById('btn-reset');
+
         window.onload = function() {
-            loadCustomArray();
+            generateArray();
+            updateSpeed();
+            updateButtons();
         };
 
         function updateSpeed() {
-            delay = 1010 - document.getElementById('speed').value;
-            document.getElementById('speed-val').innerText = document.getElementById('speed').value + 'ms';
+            const speedLevel = Number(document.getElementById('speed').value);
+            delay = 1050 - speedLevel * 100;
+            const speedLabel = speedLevel <= 3 ? '慢' : speedLevel <= 7 ? '中等' : '快';
+            document.getElementById('speed-val').innerText = `${speedLabel} (${delay}ms)`;
+        }
+
+        function updateButtons() {
+            btnGenerate.disabled = isSorting;
+            btnLoad.disabled = isSorting;
+            btnReset.disabled = isSorting;
+            btnSort.disabled = isSorting && isAutoRun;
+            btnStep.disabled = isSorting && isAutoRun;
+            btnStop.disabled = !isSorting;
         }
 
         function loadCustomArray() {
             if (isSorting) return;
-            
             const input = document.getElementById('array-input').value;
-            const values = input.split(',').map(v => parseInt(v.trim())).filter(v => !isNaN(v));
-            
+            const values = input.split(',').map(v => parseInt(v.trim(), 10)).filter(v => !Number.isNaN(v));
             if (values.length === 0) {
                 alert('請輸入有效的數字，用逗號分隔');
                 return;
             }
-            
             array = values.slice();
+            resetSortingState();
             renderArray();
             statusText.innerText = `已載入 ${array.length} 個元素的陣列`;
-            resetBarColors();
-            resetStats();
         }
 
         function generateArray() {
             if (isSorting) return;
-            array = Array.from({length: Math.floor(Math.random() * 6) + 10}, () => Math.floor(Math.random() * 90) + 10);
+            array = Array.from({ length: Math.floor(Math.random() * 6) + 10 }, () => Math.floor(Math.random() * 90) + 10);
+            document.getElementById('array-input').value = array.join(',');
+            resetSortingState();
             renderArray();
             statusText.innerText = `已產生 ${array.length} 個隨機元素的陣列`;
-            resetBarColors();
-            resetStats();
-            document.getElementById('array-input').value = array.join(',');
         }
 
         function resetVisualization() {
-            if (isSorting) return;
-            resetBarColors();
-            resetStats();
-            statusText.innerText = "已重置，請重新開始排序";
+            stopSort();
+            resetSortingState();
+            renderArray();
+            statusText.innerText = '已重置，請重新開始排序';
         }
 
-        function resetStats() {
+        function resetSortingState() {
+            sortGenerator = null;
+            isSorting = false;
+            isAutoRun = false;
+            shouldStop = false;
             stepCount = 0;
             compareCount = 0;
             shiftCount = 0;
             updateStats();
+            clearStepLog();
+            updateButtons();
         }
 
         function updateStats() {
@@ -498,92 +605,196 @@
             document.getElementById('shift-count').innerText = shiftCount;
         }
 
-        function renderArray() {
+        function clearStepLog() {
+            stepLog.innerHTML = '';
+        }
+
+        function logStep(message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = message;
+            stepLog.prepend(entry);
+            if (stepLog.childElementCount > 40) {
+                stepLog.removeChild(stepLog.lastChild);
+            }
+        }
+
+        function renderArray(highlights = {}) {
             container.innerHTML = '';
             array.forEach((value, index) => {
                 const bar = document.createElement('div');
                 bar.className = 'bar';
                 bar.style.height = `${value * 3}px`;
-                bar.innerText = value;
-                bar.id = `bar-${index}`;
+                bar.textContent = value;
+                if (highlights[index]) {
+                    bar.classList.add(highlights[index]);
+                }
                 container.appendChild(bar);
             });
         }
 
-        function updateBarColor(index, className) {
-            const bar = document.getElementById(`bar-${index}`);
-            if (bar) {
-                bar.className = 'bar';
-                if (className) {
-                    bar.classList.add(className);
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function stopSort() {
+            shouldStop = true;
+            isAutoRun = false;
+            isSorting = false;
+            statusText.innerText = '已停止排序，您可以單步或重新啟動。';
+            updateButtons();
+        }
+
+        async function runSort(auto) {
+            if (!sortGenerator) {
+                sortGenerator = createInsertionGenerator();
+            }
+            isSorting = true;
+            isAutoRun = auto;
+            updateButtons();
+
+            const next = sortGenerator.next();
+            if (next.done) {
+                finishSort();
+                return;
+            }
+
+            applyStep(next.value);
+            if (shouldStop) {
+                isSorting = false;
+                isAutoRun = false;
+                updateButtons();
+                return;
+            }
+
+            if (auto) {
+                await sleep(delay);
+                if (!shouldStop) {
+                    runSort(true);
                 }
+            } else {
+                isSorting = false;
+                updateButtons();
             }
         }
 
-        function resetBarColors() {
-            const bars = document.querySelectorAll('.bar');
-            bars.forEach(bar => bar.className = 'bar');
+        function startInsertionSort() {
+            if (array.length === 0) return;
+            shouldStop = false;
+            if (!sortGenerator) {
+                sortGenerator = createInsertionGenerator();
+            }
+            runSort(true);
         }
 
-        async function startInsertionSort() {
-            if (isSorting || array.length === 0) return;
-            isSorting = true;
-            btnGenerate.disabled = true;
-            btnSort.disabled = true;
-            btnLoad.disabled = true;
-            btnReset.disabled = true;
+        function stepInsertionSort() {
+            if (array.length === 0) return;
+            shouldStop = false;
+            if (!sortGenerator) {
+                sortGenerator = createInsertionGenerator();
+            }
+            runSort(false);
+        }
 
-            resetStats();
+        function finishSort() {
+            isSorting = false;
+            isAutoRun = false;
+            sortGenerator = null;
+            updateButtons();
+            renderArray();
+            statusText.innerText = `排序完成！共 ${stepCount} 步，${compareCount} 次比較，${shiftCount} 次移動`;
+        }
+
+        function applyStep(step) {
+            if (step.text) {
+                statusText.innerText = step.text;
+                logStep(step.text);
+            }
+            switch (step.type) {
+                case 'start-insertion':
+                    stepCount += 1;
+                    updateStats();
+                    renderArray({ [step.index]: 'swapping' });
+                    break;
+                case 'compare':
+                    compareCount += 1;
+                    updateStats();
+                    renderArray({ [step.index]: 'swapping', [step.compareIndex]: 'comparing' });
+                    break;
+                case 'shift':
+                    shiftCount += 1;
+                    updateStats();
+                    renderArray({ [step.index]: 'swapping', [step.shiftIndex]: 'comparing' });
+                    break;
+                case 'insert':
+                    renderArray({ [step.index]: 'swapping' });
+                    break;
+                case 'sorted':
+                    renderArray({ [step.index]: 'sorted' });
+                    break;
+                default:
+                    renderArray();
+            }
+        }
+
+        function* createInsertionGenerator() {
             const n = array.length;
-            
-            // 第一個元素預設為已排序
-            updateBarColor(0, 'sorted');
+            for (let i = 0; i < n; i++) {
+                yield {
+                    type: 'sorted',
+                    index: i,
+                    text: `位置 ${i + 1} 的元素 ${array[i]} 已排序`
+                };
+            }
 
             for (let i = 1; i < n; i++) {
-                stepCount++;
                 let key = array[i];
                 let j = i - 1;
-                
-                statusText.innerText = `步驟 ${stepCount}: 取出 ${key} 準備插入已排序序列`;
-                updateBarColor(i, 'swapping');
-                await new Promise(r => setTimeout(r, delay));
 
-                while (j >= 0 && array[j] > key) {
-                    compareCount++;
-                    updateStats();
-                    statusText.innerText = `步驟 ${stepCount}: 比較 ${key} < ${array[j]}，將 ${array[j]} 向右移動`;
-                    updateBarColor(j, 'comparing');
-                    await new Promise(r => setTimeout(r, delay));
-                    
+                yield {
+                    type: 'start-insertion',
+                    index: i,
+                    text: `第 ${i + 1} 輪：取出位置 ${i + 1} 的元素 ${key} 準備插入`
+                };
+
+                while (j >= 0) {
+                    yield {
+                        type: 'compare',
+                        index: i,
+                        compareIndex: j,
+                        text: `比較 ${key} 與位置 ${j + 1} 的元素 ${array[j]}`
+                    };
+
+                    if (array[j] <= key) {
+                        break;
+                    }
+
+                    yield {
+                        type: 'shift',
+                        index: i,
+                        shiftIndex: j,
+                        text: `${array[j]} > ${key}，將 ${array[j]} 向右移動到位置 ${j + 2}`
+                    };
+
                     array[j + 1] = array[j];
-                    shiftCount++;
-                    updateStats();
-                    renderArray();
-                    
-                    // 恢復已排序部分的顏色與當前移動狀態
-                    for(let k = 0; k < i; k++) updateBarColor(k, 'sorted');
-                    updateBarColor(j, 'comparing');
-                    updateBarColor(j + 1, 'swapping');
-                    
                     j = j - 1;
-                    await new Promise(r => setTimeout(r, delay));
                 }
-                
-                array[j + 1] = key;
-                renderArray();
-                statusText.innerText = `步驟 ${stepCount}: 將 ${key} 插入位置 ${j + 1}`;
-                
-                // 標記目前所有處理過的為已排序
-                for(let k = 0; k <= i; k++) updateBarColor(k, 'sorted');
-                await new Promise(r => setTimeout(r, delay));
-            }
 
-            statusText.innerText = `排序完成！總共 ${stepCount} 步，${compareCount} 次比較，${shiftCount} 次移動`;
-            isSorting = false;
-            btnGenerate.disabled = false;
-            btnSort.disabled = false;
-            btnLoad.disabled = false;
-            btnReset.disabled = false;
+                array[j + 1] = key;
+                yield {
+                    type: 'insert',
+                    index: j + 1,
+                    text: `將 ${key} 插入到位置 ${j + 2}`
+                };
+
+                for (let k = 0; k <= i; k++) {
+                    yield {
+                        type: 'sorted',
+                        index: k,
+                        text: `前 ${i + 1} 個元素已排序完成`
+                    };
+                }
+            }
         }
     </script>
 </body>

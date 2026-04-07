@@ -7,6 +7,7 @@
     <style>
         :root {
             --primary-color: #3498db;
+            --secondary-color: #ff7f50;
             --compare-color: #f1c40f;
             --swap-color: #e74c3c;
             --sorted-color: #2ecc71;
@@ -14,6 +15,7 @@
             --text-color: #333;
             --surface: #ffffff;
             --border-color: #e9ecef;
+            --highlight-color: #fff4e8;
         }
 
         * {
@@ -92,11 +94,17 @@
         }
 
         .highlight-box {
-            border-left: 4px solid var(--primary-color);
-            background: #eef6ff;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 16px;
+            border-left: 4px solid var(--secondary-color);
+            background: var(--highlight-color);
+            color: #3a2a18;
+            padding: 18px;
+            border-radius: 14px;
+            margin-top: 18px;
+            box-shadow: inset 0 0 0 1px rgba(255, 127, 80, 0.15);
+        }
+
+        .highlight-box strong {
+            color: var(--secondary-color);
         }
 
         .complexity-table {
@@ -114,6 +122,31 @@
 
         .complexity-table th {
             background: #f2f6fb;
+        }
+
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .difficulty-easy {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .difficulty-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .controls {
@@ -322,8 +355,9 @@
 
     <div class="container">
         <!-- 1. 原理與複雜度 -->
+        <!-- 1. 操作原理 -->
         <div class="info-section">
-            <h2>📖 操作原理</h2>
+            <h2>1. 操作原理</h2>
             <p>奇偶排序法將排序過程分為奇數階段和偶數階段，交替進行比較和交換，類似於氣泡排序但更適合並行處理。</p>
             <ul>
                 <li><strong>奇數階段：</strong>比較所有奇數索引位置的元素與其右邊相鄰元素（索引 1,3,5... 與 2,4,6...）。</li>
@@ -331,7 +365,9 @@
                 <li><strong>重複：</strong>交替進行奇偶階段，直到沒有交換發生。</li>
             </ul>
 
-            <h3>📊 演算法複雜度</h3>
+        <!-- 2. 時間及空間複雜度 -->
+        <div class="info-section">
+            <h2>2. 時間及空間複雜度</h2>
             <div class="complexity-grid">
                 <div class="card">
                     <strong>時間複雜度 (平均/最差)</strong>
@@ -352,8 +388,9 @@
         </div>
 
         <!-- 2. 視覺化演示 -->
+        <!-- 3. 互動視覺化 -->
         <div class="visualization-area">
-            <h2>🎥 過程演示</h2>
+            <h2>3. 互動視覺化</h2>
             
             <div class="controls">
                 <div class="control-row">
@@ -369,9 +406,9 @@
                 
                 <div class="control-row">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <label for="speed">動畫速度:</label>
-                        <input type="range" id="speed" min="10" max="1000" value="500" oninput="updateSpeed()">
-                        <span id="speed-val">500ms</span>
+                        <label for="speed">動畫速度（右快左慢）：</label>
+                        <input type="range" id="speed" min="1" max="10" value="5" oninput="updateSpeed()">
+                        <span id="speed-val">中等</span>
                     </div>
                 </div>
 
@@ -405,9 +442,9 @@
             </div>
         </div>
 
-        <!-- 3. 程式碼展示 -->
+        <!-- 4. 偽代碼及實作範例 -->
         <div class="code-section">
-            <h3>💻 奇偶排序法程式碼 (JavaScript)</h3>
+            <h2>4. 偽代碼及實作範例</h2>
             <div class="code-block">function oddEvenSort(arr) {
     let n = arr.length;
     let sorted = false;
