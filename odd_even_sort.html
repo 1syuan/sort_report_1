@@ -589,9 +589,8 @@
             statusText.innerText = '已重置，請重新開始排序';
             clearStepLog();
             sortGenerator = null;
-            isPaused = false;
+            shouldStop = false;
             updateButtonStates();
-        }
         }
 
         function resetSortingState() {

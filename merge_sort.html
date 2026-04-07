@@ -605,11 +605,11 @@ function merge(left, right) {
 
         function updateButtonStates() {
             btnGenerate.disabled = isSorting;
-            btnSort.disabled = isSorting || array.length === 0;
-            btnStep.disabled = !isPaused || !sortGenerator;
-            btnStop.disabled = !isSorting && !isPaused;
             btnLoad.disabled = isSorting;
             btnReset.disabled = isSorting;
+            btnSort.disabled = isSorting && isAutoRun;
+            btnStep.disabled = isSorting && isAutoRun;
+            btnStop.disabled = !isSorting;
         }
 
         function renderArray(highlight = {}) {
@@ -769,13 +769,11 @@ function merge(left, right) {
             runSort(false);
         }
 
-        function finishSort() {
+        function stopSort() {
+            shouldStop = true;
             isSorting = false;
             isAutoRun = false;
-            sortGenerator = null;
             updateButtonStates();
-            renderArray();
-            statusText.innerText = `排序完成！共 ${stepCount} 步，${compareCount} 次比較，${mergeCount} 次合併`;
         }
 
         function applyStep(step) {
