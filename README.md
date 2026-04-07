@@ -1,8 +1,8 @@
 # sort_report_1
 # 計算機概論：排序演算法分析與互動視覺化實作報告
 
-**學生姓名：** [李翊瑄]  
-**學號：** [11428204]  
+**學生姓名：** 李翊瑄
+**學號：** 11428204
 **系級：** 電機一乙  
 **模擬頁面：** [https://1syuan.github.io/sort_report_1/](https://1syuan.github.io/sort_report_1/)
 
